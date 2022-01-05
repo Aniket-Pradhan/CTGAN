@@ -273,20 +273,25 @@ class TestDataTransformer(TestCase):
         """Test ``_inverse_transform_continuous``.
 
         Setup:
-            - Mock ``column_transform_info``.
+            - Create ``DataTransformer``.
+            - Mock the ``BayesGMMTransformer`` where:
+                - ``get_output_types`` returns the appropriate dictionary.
+                - ``reverse_transform`` returns some dataframe.
 
         Input:
-            - column_data = np.ndarray
+            - a ``ColumnTransformInfo`` object.
+            - a np.ndarray where:
               - the first column contains the normalized value
               - the remaining columns correspond to the one-hot
             - sigmas = np.ndarray of floats
             - st = index of the sigmas ndarray
 
         Output:
-            - numpy array containing a single column of continuous values.
+            - dataframe where the first column are floats and the second is a lable encoding.
 
         Side Effects:
-            - None.
+            - the ``reverse_transform`` method should be called with a dataframe
+            where the first column are floats and the second is a lable encoding.
         """
         # Setup
         bgm_instance = MockBGM.return_value
