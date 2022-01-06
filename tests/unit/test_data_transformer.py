@@ -339,7 +339,7 @@ class TestDataTransformer(TestCase):
         )
 
     def test_inverse_transform(self):
-        """Test `inverse_transform`` on a np.ndarray with continuous and discrete columns.
+        """Test ``inverse_transform`` on a np.ndarray with continuous and discrete columns.
 
         It should use the appropriate '_fit' type for each column and should return
         the corresponding columns. Since we are using the same example as the 'test_transform',
