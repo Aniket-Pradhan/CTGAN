@@ -52,8 +52,8 @@ def _parse_args():
     parser.add_argument('--sample_condition_column_value', default=None, type=str,
                         help='Specify the value of the selected discrete column.')
 
-    parser.add_argument('data', help='Path to training data')
-    parser.add_argument('output', help='Path of the output file')
+    parser.add_argument('--data', help='Path to training data')
+    parser.add_argument('--output', help='Path of the output file')
 
     return parser.parse_args()
 

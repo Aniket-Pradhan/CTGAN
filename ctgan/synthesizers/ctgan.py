@@ -4,6 +4,7 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 import torch
 from packaging import version
 from torch import optim
@@ -340,7 +341,11 @@ class CTGANSynthesizer(BaseSynthesizer):
 
         steps_per_epoch = max(len(train_data) // self._batch_size, 1)
         for i in range(epochs):
-            for id_ in range(steps_per_epoch):
+            for id_ in tqdm(
+                range(steps_per_epoch),
+                desc="Epoch: {}/{} Fitting GAN".format(i+1, epochs),
+                total=steps_per_epoch
+            ):
 
                 for n in range(self._discriminator_steps):
                     fakez = torch.normal(mean=mean, std=std)

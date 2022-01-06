@@ -4,8 +4,12 @@ from collections import namedtuple
 
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 from rdt.transformers import OneHotEncodingTransformer
 from sklearn.mixture import BayesianGaussianMixture
+
+import torch
+from torch.utils.data import TensorDataset, DataLoader
 
 SpanInfo = namedtuple('SpanInfo', ['dim', 'activation_fn'])
 ColumnTransformInfo = namedtuple(
@@ -24,7 +28,8 @@ class DataTransformer(object):
     Discrete columns are encoded using a scikit-learn OneHotEncoder.
     """
 
-    def __init__(self, max_clusters=10, weight_threshold=0.005):
+    def __init__(self, max_clusters=10, weight_threshold=0.005,
+                 gmm_batchsize=1000, gmm_shuffle=True):
         """Create a data transformer.
 
         Args:
@@ -35,6 +40,8 @@ class DataTransformer(object):
         """
         self._max_clusters = max_clusters
         self._weight_threshold = weight_threshold
+        self.gmm_batchsize = gmm_batchsize
+        self.gmm_shuffle = gmm_shuffle
 
     def _fit_continuous(self, column_name, raw_column_data):
         """Train Bayesian GMM for continuous column."""
@@ -42,10 +49,23 @@ class DataTransformer(object):
             n_components=self._max_clusters,
             weight_concentration_prior_type='dirichlet_process',
             weight_concentration_prior=0.001,
-            n_init=1
+            n_init=1,
+            warm_start=True
         )
 
-        gm.fit(raw_column_data.reshape(-1, 1))
+        col_dataset = TensorDataset(torch.Tensor(raw_column_data))
+        col_dataloader = DataLoader(
+            col_dataset,
+            batch_size=self.gmm_batchsize,
+            shuffle=self.gmm_shuffle
+        )
+
+        for col_values in tqdm(
+            col_dataloader,
+            desc="Fitting GMM for column: {col_name}".format(col_name=column_name)
+        ):
+            X = col_values[0].reshape(-1, 1)
+            gm.fit(X)
         valid_component_indicator = gm.weights_ > self._weight_threshold
         num_components = valid_component_indicator.sum()
 

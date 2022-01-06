@@ -6,9 +6,18 @@ import numpy as np
 import pandas as pd
 
 
+def trim_all_columns(df):
+    """
+    Trim whitespace from ends of each value across all series in dataframe
+    """
+    trim_strings = lambda x: x.strip() if isinstance(x, str) else x
+    return df.applymap(trim_strings)
+
+
 def read_csv(csv_filename, meta_filename=None, header=True, discrete=None):
     """Read a csv file."""
     data = pd.read_csv(csv_filename, header='infer' if header else None)
+    data = trim_all_columns(data)
 
     if meta_filename:
         with open(meta_filename) as meta_file:
