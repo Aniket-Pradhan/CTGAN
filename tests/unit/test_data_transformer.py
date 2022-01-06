@@ -171,7 +171,7 @@ class TestDataTransformer(TestCase):
         bgm_instance.transform = Mock()
         bgm_instance.transform.return_value = pd.DataFrame({
             'x.normalized': [0.1, 0.2, 0.3],
-            'x.component': [0.0, 1.0, 1.0]  # double check that this works with other values.
+            'x.component': [0.0, 1.0, 1.0]
         })
 
         transformer = DataTransformer()
@@ -279,18 +279,18 @@ class TestDataTransformer(TestCase):
                 - ``reverse_transform`` returns some dataframe.
 
         Input:
-            - a ``ColumnTransformInfo`` object.
-            - a np.ndarray where:
-              - the first column contains the normalized value
-              - the remaining columns correspond to the one-hot
+            - A ``ColumnTransformInfo`` object.
+            - A np.ndarray where:
+              - The first column contains the normalized value
+              - The remaining columns correspond to the one-hot
             - sigmas = np.ndarray of floats
             - st = index of the sigmas ndarray
 
         Output:
-            - dataframe where the first column are floats and the second is a lable encoding.
+            - Dataframe where the first column are floats and the second is a lable encoding.
 
         Side Effects:
-            - the ``reverse_transform`` method should be called with a dataframe
+            - The ``reverse_transform`` method should be called with a dataframe
             where the first column are floats and the second is a lable encoding.
         """
         # Setup
